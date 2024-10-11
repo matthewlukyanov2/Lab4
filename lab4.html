@@ -192,11 +192,16 @@
         // Display a message on the canvas for 0.75 seconds
         function showCollisionMessage() {
             const message = "Collision detected!";
+            ctx.fillStyle = 'red';
+            ctx.font = '30px Arial';
+            ctx.fillText(message, canvas.width / 2 - 100, canvas.height / 2);
 
-            }
+        // Remove the message after 0.75 seconds
+          setTimeout(() => {
+          ctx.clearRect(canvas.width / 2 - 100, canvas.height / 2 - 30, 300, 50); 
+          }, 750);
+        }
     
-
-
         // Animation loop
         function animate() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
