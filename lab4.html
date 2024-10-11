@@ -23,7 +23,7 @@
                 this.yVelocity = yVelocity; 
                 this.rotationSpeed = rotationSpeed; 
                 this.rotationAngle = 0; 
-                this.gravity = 0.1; 
+                //this.gravity = 0.1; 
 
             }
 
@@ -185,6 +185,11 @@
             let distance = Math.sqrt(dx * dx + dy * dy);
 
             if (distance < ball.radius + paddle.radius) {
+
+                // Reverse ball velocity upon collision
+                ball.xVelocity = -ball.xVelocity;
+                ball.yVelocity = -ball.yVelocity;
+
               showCollisionMessage();
             }
         }
