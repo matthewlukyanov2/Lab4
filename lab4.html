@@ -216,6 +216,10 @@
             paddle2.move(canvas.height);
             paddle2.draw(ctx);
 
+            // Detect collision between the ball and both paddles
+            detectCollision(ball, paddle1);
+            detectCollision(ball, paddle2);
+
             window.requestAnimationFrame(animate);
         }
 
