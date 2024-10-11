@@ -180,7 +180,13 @@
 
         //function to detect collisions
         function detectCollision(ball, paddle) {
-            
+            let dx = ball.x - paddle.x;
+            let dy = ball.y - paddle.y;
+            let distance = Math.sqrt(dx * dx + dy * dy);
+
+            if (distance < ball.radius + paddle.radius) {
+              showCollisionMessage();
+         }
         }
 
 
