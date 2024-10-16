@@ -15,7 +15,7 @@
     <canvas id="canvas-for-ball" width="800" height="400"></canvas>
     <script type="text/javascript">
         class Ball {
-            constructor(x, y, radius, xVelocity, yVelocity, rotationSpeed) {
+            constructor(x, y, radius, xVelocity, yVelocity, rotationSpeed, color = 'red') {
                 this.x = x; 
                 this.y = y; 
                 this.radius = radius; 
@@ -24,6 +24,7 @@
                 this.rotationSpeed = rotationSpeed; 
                 this.rotationAngle = 0; 
                 this.gravity = 0.1; 
+                this.color = color;
             }
 
             draw(ctx) {
@@ -32,8 +33,11 @@
                 ctx.rotate(this.rotationAngle);
 
                 // Draw outer circle
+                ctx.fillStyle = this.color;
                 ctx.beginPath();
                 ctx.arc(0, 0, this.radius, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.strokeStyle = 'black';
                 ctx.stroke();
 
                 // Draw peace sign inner lines
