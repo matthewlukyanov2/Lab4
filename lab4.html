@@ -138,6 +138,23 @@
         const canvas = document.getElementById("canvas-for-ball");
         const ctx = canvas.getContext("2d");
 
+        // Create an array to store multiple balls
+        let balls = [];
+
+        // Function to add a new random ball to the array
+        function addNewBall() {
+            const x = Math.random() * canvas.width;
+            const y = Math.random() * canvas.height;
+            const radius = 20;
+            const xVelocity = (Math.random() - 0.5) * 4; // Random horizontal velocity
+            const yVelocity = (Math.random() - 0.5) * 4; // Random vertical velocity
+            const rotationSpeed = (Math.random() - 0.5) * 0.1; // Random rotation speed
+            const color = `hsl(${Math.random() * 360}, 100%, 50%)`; // Random color
+
+            const newBall = new Ball(x, y, radius, xVelocity, yVelocity, rotationSpeed, color);
+            balls.push(newBall); // Add the new ball to the array
+        }
+
         // Create a new ball object
         let ball = new Ball(150, 150, 20, 2, 2, 0.05);
         
