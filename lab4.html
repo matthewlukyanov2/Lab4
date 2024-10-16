@@ -24,11 +24,8 @@
                 this.rotationSpeed = rotationSpeed; 
                 this.rotationAngle = 0; 
                 this.gravity = 0.1; 
-
             }
 
-            // Draw the ball
-            //
             draw(ctx) {
                 ctx.save();
                 ctx.translate(this.x, this.y);
@@ -39,7 +36,7 @@
                 ctx.arc(0, 0, this.radius, 0, Math.PI * 2);
                 ctx.stroke();
 
-                // Draw the peace sign inner lines
+                // Draw peace sign inner lines
                 ctx.beginPath();
                 ctx.moveTo(0, -this.radius);
                 ctx.lineTo(0, this.radius);
@@ -62,7 +59,6 @@
                 ctx.restore(); // Restore the original context
             }
 
-            // Move the ball and handle wall collisions
             move(canvasWidth, canvasHeight) {
                 this.yVelocity += this.gravity;
                 this.x += this.xVelocity;
@@ -71,7 +67,6 @@
                 // Collision detection for left/right walls
                 if (this.x - this.radius <= 0 || this.x + this.radius >= canvasWidth) {
                     this.xVelocity = -this.xVelocity;
-                    this.rotationSpeed = -this.rotationSpeed;
                 }
 
                 // Collision detection for top/bottom walls
@@ -81,14 +76,13 @@
                 } else if (this.y - this.radius <= 0) {
                     this.y = this.radius; 
                     this.yVelocity *= -0.9; 
-               }
+                }
 
                 // Update the rotation angle
                 this.rotationAngle += this.rotationSpeed;
             }
         }
 
-        // Paddle class 
         class Paddle {
             constructor(x, y, radius, speed) {
                 this.x = x; 
@@ -96,10 +90,9 @@
                 this.radius = radius;
                 this.speed = speed; 
                 this.yVelocity = 0; 
-                this.score = 0; // Initialize score for each paddle
+                this.score = 0; 
             }
 
-            // Draw the paddle
             draw(ctx) {
                 ctx.fillStyle = 'blue'; 
                 ctx.beginPath();
@@ -107,29 +100,26 @@
                 ctx.fill();
             }
 
-            // Move the paddle
             move(canvasHeight) {
                 this.y += this.yVelocity;
 
                 // Prevent the paddle from going off the canvas (vertically)
-                if (this.y < 0) this.y = 0;
-                if (this.y + this.height > canvasHeight) this.y = canvasHeight - this.height;
+                if (this.y < this.radius) this.y = this.radius;
+                if (this.y + this.radius > canvasHeight) this.y = canvasHeight - this.radius; 
             }
 
-            // Change the paddle's velocity based on the key pressed
             updateVelocity(direction) {
                 if (direction === 'up') {
                     this.yVelocity = -this.speed; 
                 } else if (direction === 'down') {
                     this.yVelocity = this.speed; 
-                } else if (direction === 'stop') {
+                } else {
                     this.yVelocity = 0; 
                 }
             }
 
-            // Move the paddle's y-position to match the mouse movement
             moveTo(y) {
-                this.y = y - this.height / 2; 
+                this.y = y - this.radius; 
             }
         }
 
@@ -141,10 +131,12 @@
         let ball = new Ball(150, 150, 20, 2, 2, 0.05);
 
         // Create new paddle objects
-        let paddle1 = new Paddle(50, canvas.height / 2 - 25, 10, 50, 5); 
-        let paddle2 = new Paddle(740, canvas.height / 2 - 25, 10, 50, 5); 
+        let paddle1 = new Paddle(50, canvas.height / 2, 25, 5); 
+        let paddle2 = new Paddle(740, canvas.height / 2, 25, 5); 
 
-        // Handle keyboard input for both paddles
+        let collisionMessage = ""; // Variable to hold the collision message
+        let messageTimeout; // To hold the timeout ID for clearing the message
+
         window.addEventListener("keydown", function(event) {
             if (event.key === 'ArrowUp') {
                 paddle2.updateVelocity('up'); 
@@ -155,16 +147,8 @@
             } else if (event.key === 's') {
                 paddle1.updateVelocity('down'); 
             }
-
-            // Control rotation speed
-            if (event.key === 'a') {
-                ball.rotationSpeed += 0.01; // Increase rotation speed
-            } else if (event.key === 'd') {
-                ball.rotationSpeed -= 0.01; // Decrease rotation speed
-            }
         });
 
-        // Stop paddle movement when the key is released
         window.addEventListener("keyup", function(event) {
             if (event.key === 'ArrowUp' || event.key === 'ArrowDown') {
                 paddle2.updateVelocity('stop'); 
@@ -173,43 +157,54 @@
             }
         });
 
-        // Handle mouse movement for the left paddle (paddle1)
         canvas.addEventListener("mousemove", function(event) {
             const rect = canvas.getBoundingClientRect();
             const mouseY = event.clientY - rect.top; 
             paddle1.moveTo(mouseY); 
         });
 
-        //function to detect collisions
         function detectCollision(ball, paddle) {
             let dx = ball.x - paddle.x;
             let dy = ball.y - paddle.y;
             let distance = Math.sqrt(dx * dx + dy * dy);
 
             if (distance < ball.radius + paddle.radius) {
-
                 // Reverse ball velocity upon collision
                 ball.xVelocity = -ball.xVelocity;
                 ball.yVelocity = -ball.yVelocity;
-                
-              showCollisionMessage();
+                paddle.score++;
+
+                // Set the collision message and clear it after 0.75 seconds
+                collisionMessage = "Collision detected!";
+                clearTimeout(messageTimeout); // Clear any existing timeout
+                messageTimeout = setTimeout(() => {
+                    collisionMessage = ""; // Clear the message
+                }, 750);
             }
         }
 
-        // Display a message on the canvas for 0.75 seconds
-        function showCollisionMessage() {
-            const message = "Collision detected!";
-            ctx.fillStyle = 'red';
-            ctx.font = '30px Arial';
-            ctx.fillText(message, canvas.width / 2 - 100, canvas.height / 2);
-
-        // Remove the message after 0.75 seconds
-          setTimeout(() => {
-          ctx.clearRect(canvas.width / 2 - 100, canvas.height / 2 - 30, 300, 50); 
-          }, 750);
+        function resetBall() {
+            ball.x = canvas.width / 2;
+            ball.y = canvas.height / 2;
+            ball.xVelocity = 2; // Reset to original speed
+            ball.yVelocity = 2; // Reset to original speed
         }
-    
-        // Animation loop
+
+        function drawScores() {
+            ctx.fillStyle = 'black';
+            ctx.font = '20px Arial';
+            ctx.fillText(`Player 1 Score: ${paddle1.score}`, 50, 30);
+            ctx.fillText(`Player 2 Score: ${paddle2.score}`, canvas.width - 150, 30);
+        }
+
+        function drawCollisionMessage() {
+            if (collisionMessage) {
+                ctx.fillStyle = 'red';
+                ctx.font = '30px Arial';
+                ctx.fillText(collisionMessage, canvas.width / 2 - 100, canvas.height / 2);
+            }
+        }
+
         function animate() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -226,6 +221,18 @@
             // Detect collision between the ball and both paddles
             detectCollision(ball, paddle1);
             detectCollision(ball, paddle2);
+
+            // Check if the ball hits the walls behind paddles
+            if (ball.x - ball.radius < paddle1.x) {
+                paddle2.score--; 
+                resetBall(); // Reset the ball's position
+            } else if (ball.x + ball.radius > paddle2.x) {
+                paddle1.score--; 
+                resetBall(); // Reset the ball's position
+            }
+
+            drawScores(); // Draw scores on the canvas
+            drawCollisionMessage(); // Draw the collision message
 
             window.requestAnimationFrame(animate);
         }
