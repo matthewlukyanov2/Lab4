@@ -141,6 +141,11 @@
         // Create an array to store multiple balls
         let balls = [];
 
+        // Add the initial ball into the array
+        let ball = new Ball(150, 150, 20, 2, 2, 0.05);
+        balls.push(ball);
+
+
         // Function to add a new random ball to the array
         function addNewBall() {
             const x = Math.random() * canvas.width;
@@ -176,7 +181,7 @@
         });
 
         // Create a new ball object
-        let ball = new Ball(150, 150, 20, 2, 2, 0.05);
+        //let ball = new Ball(150, 150, 20, 2, 2, 0.05);
         
 
         // Create new paddle objects
@@ -269,9 +274,11 @@
         function animate() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-            // Move and draw the ball
-            ball.move(canvas.width, canvas.height);
-            ball.draw(ctx);
+            // Move and draw all the balls in the array
+            balls.forEach(ball => {
+                ball.move(canvas.width, canvas.height);
+                ball.draw(ctx);
+            });
 
             paddle1.move(canvas.height);
             paddle1.draw(ctx);
