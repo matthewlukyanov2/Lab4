@@ -133,13 +133,26 @@
 
         // Create a new ball object
         let ball = new Ball(150, 150, 20, 2, 2, 0.05);
+        
 
         // Create new paddle objects
         let paddle1 = new Paddle(50, canvas.height / 2, 25, 5); 
         let paddle2 = new Paddle(740, canvas.height / 2, 25, 5); 
 
         let collisionMessage = ""; // Variable to hold the collision message
-        let messageTimeout; // To hold the timeout ID for clearing the message
+        let messageTimeout; 
+
+        window.addEventListener('keydown', function(event) {
+           if (event.key === '+') {
+        // Increase both xVelocity and yVelocity by 1 unit
+              ball.xVelocity *= 1.1;
+              ball.yVelocity *= 1.1;
+           } else if (event.key === '-') {
+        // Decrease both xVelocity and yVelocity by 1 unit
+              ball.xVelocity *= 0.9;
+              ball.yVelocity *= 0.9;
+           }
+        });
 
         window.addEventListener("keydown", function(event) {
             if (event.key === 'ArrowUp') {
