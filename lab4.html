@@ -85,6 +85,13 @@
                 // Update the rotation angle
                 this.rotationAngle += this.rotationSpeed;
             }
+
+                // Check if the ball contains the given (mouseX, mouseY)
+            contains(mouseX, mouseY) {
+                const dx = mouseX - this.x;
+                const dy = mouseY - this.y;
+                return Math.sqrt(dx * dx + dy * dy) < this.radius;
+            }
         }
 
         class Paddle {
